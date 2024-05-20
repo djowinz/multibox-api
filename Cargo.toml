@@ -8,3 +8,15 @@ edition = "2021"
 [dependencies]
 diesel = { version = "2.1.6", features = ["postgres"] }
 dotenvy = "0.15.7"
+argon2 = "0.5.0"
+axum = "0.7.5"
+axum-extra = { version = "0.9.3", features = ["cookie"] }
+chrono = { version = "0.4.24", features = ["serde"] }
+jsonwebtoken = "9.3.0"
+rand_core = { version = "0.6.4", features = ["std"] }
+serde = { version = "1.0.159", features = ["derive"] }
+serde_json = "1.0.95"
+time = "0.3.20"
+tokio = { version = "1.27.0", features = ["full"] }
+tower-http = { version = "0.5.2", features = ["cors"] }
+uuid = { version = "1.3.0", features = ["serde", "v4"] }

@@ -73,6 +73,7 @@ diesel::table! {
 diesel::joinable!(groups -> users (user_id));
 diesel::joinable!(inbox_labels -> users (user_id));
 diesel::joinable!(messages -> groups (group_id));
+diesel::joinable!(sorting_ranks -> groups (group_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     audit_logs,
