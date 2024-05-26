@@ -14,10 +14,7 @@ Cargo.lock
 *.pdb
 
 # Environment file
-.env
-.env-local
-
-# Blackbox files
-/.blackbox/pubring.gpg~
-/.blackbox/pubring.kbx~
-/.blackbox/secring.gpg
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS messages (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
     FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_messages_group_id ON messages (group_id);
