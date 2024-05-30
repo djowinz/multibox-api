@@ -16,10 +16,10 @@ diesel::table! {
         id -> Uuid,
         user_id -> Uuid,
         message_cursor -> Text,
-        page_cursor -> Text,
+        page_cursor -> Nullable<Text>,
         title -> Nullable<Text>,
         background_color -> Nullable<Text>,
-        coallapsed -> Bool,
+        collapsed -> Bool,
         created_at -> Timestamp,
         updated_at -> Timestamp,
     }
@@ -51,7 +51,7 @@ diesel::table! {
 diesel::table! {
     sorting_ranks (group_id, message_id) {
         group_id -> Uuid,
-        message_id -> Text,
+        message_id -> Uuid,
         rank -> Int4,
         created_at -> Timestamp,
         updated_at -> Timestamp,
@@ -73,7 +73,9 @@ diesel::table! {
 diesel::joinable!(groups -> users (user_id));
 diesel::joinable!(inbox_labels -> users (user_id));
 diesel::joinable!(messages -> groups (group_id));
+diesel::joinable!(messages -> users (user_id));
 diesel::joinable!(sorting_ranks -> groups (group_id));
+diesel::joinable!(sorting_ranks -> messages (message_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     audit_logs,

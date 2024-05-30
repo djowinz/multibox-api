@@ -3,10 +3,10 @@ CREATE TABLE IF NOT EXISTS groups (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id uuid NOT NULL,
     message_cursor TEXT NOT NULL,
-    page_cursor TEXT NOT NULL,
+    page_cursor TEXT,
     title TEXT,
     background_color TEXT,
-    coallapsed BOOLEAN NOT NULL DEFAULT FALSE,
+    collapsed BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
 

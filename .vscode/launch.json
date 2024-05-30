@@ -1,0 +1,50 @@
+{
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "run toodle-api",
+      "program": "${workspaceFolder}/toodle-api/target/debug/toodle-api",
+      "args": [],
+      "cwd": "${workspaceFolder}/toodle-api",
+      "sourceMap": {},
+      "sourceLanguages": ["rust"],
+      "env": {
+        "RUST_BACKTRACE": "short",
+        "ABBR_TIPS_PROMPT": "\\n💡 \\e[1m{{ .abbr }}\\e[0m => {{ .cmd }}",
+        "ABBR_TIPS_REGEXES": "(^(\\w+\\s+)+(-{1,2})\\w+)(\\s\\S+) (^(\\s?(\\w-?)+){3}).* (^(\\s?(\\w-?)+){2}).* (^(\\s?(\\w-?)+){1}).*",
+        "COMMAND_MODE": "unix2003",
+        "HOME": "/Users/djowinz",
+        "LC_CTYPE": "en_US.UTF-8",
+        "LOGNAME": "djowinz",
+        "MallocNanoZone": "0",
+        "ORIGINAL_XDG_CURRENT_DESKTOP": "undefined",
+        "PATH": "/Users/djowinz/.cargo/bin:/opt/homebrew/opt/libpq/bin:/usr/local/bin:/opt/homebrew/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin",
+        "PWD": "/",
+        "SHELL": "/opt/homebrew/bin/fish",
+        "SHLVL": "1",
+        "SSH_AUTH_SOCK": "/private/tmp/com.apple.launchd.oHMzcInMJG/Listeners",
+        "STARSHIP_SESSION_KEY": "8051170053761103",
+        "STARSHIP_SHELL": "fish",
+        "TMPDIR": "/var/folders/6d/f2xtwsgs1m5g8kn4qvsltdt80000gn/T/",
+        "USER": "djowinz",
+        "VSCODE_AMD_ENTRYPOINT": "vs/workbench/api/node/extensionHostProcess",
+        "VSCODE_CODE_CACHE_PATH": "/Users/djowinz/Library/Application Support/Code/CachedData/dc96b837cf6bb4af9cd736aa3af08cf8279f7685",
+        "VSCODE_CRASH_REPORTER_PROCESS_TYPE": "extensionHost",
+        "VSCODE_CWD": "/",
+        "VSCODE_HANDLES_UNCAUGHT_ERRORS": "true",
+        "VSCODE_IPC_HOOK": "/Users/djowinz/Library/Application Support/Code/1.89-main.sock",
+        "VSCODE_NLS_CONFIG": "{\"locale\":\"en-us\",\"osLocale\":\"en-us\",\"availableLanguages\":{},\"_languagePackSupport\":true}",
+        "VSCODE_PID": "67489",
+        "XPC_FLAGS": "0x0",
+        "XPC_SERVICE_NAME": "application.com.microsoft.VSCode.4140729.4140735",
+        "__CFBundleIdentifier": "com.microsoft.VSCode",
+        "__CF_USER_TEXT_ENCODING": "0x1F5:0x0:0x0",
+        "ELECTRON_RUN_AS_NODE": "1",
+        "VSCODE_L10N_BUNDLE_LOCATION": "",
+        "APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL": "1",
+        "WALLABY_PRODUCTION": "true"
+      }
+    }
+  ]
+}

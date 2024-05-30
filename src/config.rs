@@ -17,7 +17,7 @@ struct DatabaseConfig {
 pub struct Config {
     server: ServerConfig,
     db: DatabaseConfig,
-    nylas_api_key: String,
+    // nylas_api_key: String,
 }
 
 impl Config {
@@ -33,9 +33,9 @@ impl Config {
         &self.db.url
     }
 
-    pub fn nylas_api_key(&self) -> &str {
-        &self.nylas_api_key
-    }
+    // pub fn nylas_api_key(&self) -> &str {
+    //     &self.nylas_api_key
+    // }
 }
 
 pub static CONFIG: OnceCell<Config> = OnceCell::const_new();
@@ -58,7 +58,7 @@ async fn init_config() -> Config {
     Config {
         server: server_config,
         db: database_config,
-        nylas_api_key: env::var("NYLAS_API_KEY").expect("NYLAS_API_KEY must be set"),
+        // nylas_api_key: env::var("NYLAS_API_KEY").expect("NYLAS_API_KEY must be set"),
     }
 }
 

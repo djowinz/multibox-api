@@ -2,6 +2,7 @@ use std::net::SocketAddr;
 
 use deadpool_diesel::postgres::{Manager, Pool};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+use tower_http::cors::CorsLayer;
 use tracing_subscriber::EnvFilter;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -11,9 +12,12 @@ use crate::routes::app_router;
 
 // modules
 mod config;
+mod domain;
 mod errors;
-// mod handlers;
+mod handlers;
+mod infra;
 mod routes;
+mod utils;
 
 // Embedded database migrations
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
@@ -42,19 +46,16 @@ async fn main() {
 
     let state = AppState { pool };
 
-    let app = app_router(state.clone()).with_state(state);
+    // apply cors and rate limiting
+    let app = app_router(state.clone()).with_state(state).layer(CorsLayer::permissive());
 
     let host = config.server_host();
     let port = config.server_port();
 
     let address = format!("{}:{}", host, port);
-
-    // socket address
     let socket_addr = address.parse::<SocketAddr>().unwrap();
 
-    // tracing
     tracing::info!("Server running at http://{}", socket_addr);
-
     let listener = tokio::net::TcpListener::bind(&socket_addr).await.unwrap();
     axum::serve(listener, app.into_make_service())
         .await

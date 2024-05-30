@@ -1,5 +1,5 @@
-use std::fmt;
 use deadpool_diesel::InteractError;
+use std::fmt;
 
 #[derive(Debug)]
 pub enum InfraError {
