@@ -36,6 +36,7 @@ pub struct GroupModel {
     pub collapsed: bool,
     pub created_at: SystemTime,
     pub updated_at: SystemTime,
+    pub sorting_order: Option<Vec<Option<String>>>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]

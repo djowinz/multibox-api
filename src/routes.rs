@@ -1,8 +1,10 @@
+use axum::middleware;
 use axum::{http::StatusCode, response::IntoResponse, routing::*, Router};
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
 
-use crate::handlers::toodle::group::{create_group, fetch_groups};
+use crate::handlers::middleware::authorize::auth_middleware;
+use crate::handlers::toodle::group::{create_group, fetch_by_id, fetch_groups};
 use crate::handlers::toodle::user::{create_user, delete_user, fetch_user, update_user};
 use crate::AppState;
 
@@ -40,15 +42,25 @@ fn user_routes(state: AppState) -> Router<AppState> {
         .route("/", post(create_user))
         .route(
             "/:id",
-            get(fetch_user).patch(update_user).delete(delete_user),
+            get(fetch_user)
+                .patch(update_user)
+                .delete(delete_user)
+                .route_layer(middleware::from_fn_with_state(
+                    state.clone(),
+                    auth_middleware,
+                )),
         )
         .with_state(state)
 }
-
 fn group_routes(state: AppState) -> Router<AppState> {
     Router::new()
         .route("/", get(fetch_groups).post(create_group))
-        .route("/:id", patch(update_group).delete(delete_group))
+        .route("/:id", get(fetch_by_id))
+        // .route("/:id", patch(update_group).delete(delete_group))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            auth_middleware,
+        ))
         .with_state(state)
 }
 

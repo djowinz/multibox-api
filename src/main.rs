@@ -1,5 +1,6 @@
 use std::net::SocketAddr;
 
+use config::Config;
 use deadpool_diesel::postgres::{Manager, Pool};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use tower_http::cors::CorsLayer;
@@ -7,7 +8,6 @@ use tracing_subscriber::EnvFilter;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::config::config;
-// use crate::errors::internal_error;
 use crate::routes::app_router;
 
 // modules
@@ -25,7 +25,9 @@ pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
 // App state
 #[derive(Clone)]
 pub struct AppState {
+    pub jwks: jsonwebtoken::jwk::JwkSet,
     pub pool: Pool,
+    pub config: Config,
 }
 
 // Entry point
@@ -44,10 +46,20 @@ async fn main() {
     // apply pending migrations
     run_migrations(&pool).await;
 
-    let state = AppState { pool };
+    let jwks = utils::jwks_utils::fetch_jwks(config.issuer())
+        .await
+        .unwrap();
+
+    let state = AppState {
+        jwks,
+        pool,
+        config: config.clone(),
+    };
 
     // apply cors and rate limiting
-    let app = app_router(state.clone()).with_state(state).layer(CorsLayer::permissive());
+    let app = app_router(state.clone())
+        .with_state(state)
+        .layer(CorsLayer::permissive());
 
     let host = config.server_host();
     let port = config.server_port();

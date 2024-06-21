@@ -17,7 +17,6 @@ pub struct NewUser {
     pub email: String,
     pub first_name: Option<String>,
     pub last_name: Option<String>,
-    pub grant_token: String,
 }
 
 #[derive(Deserialize, AsChangeset, Clone)]
@@ -26,7 +25,6 @@ pub struct UpdateUser {
     pub email: String,
     pub first_name: String,
     pub last_name: String,
-    pub grant_token: String,
 }
 
 pub async fn fetch(
@@ -48,6 +46,29 @@ pub async fn fetch(
         .await
         .map_err(|conn_err| UserError::InfraError(adapt_infra_error(conn_err)))? // connection pool error
         .map_err(|int_err| handle_constraint_errors(int_err, Some(id_key)))?; // interaction error
+
+    Ok(res)
+}
+
+pub async fn fetch_by_email(
+    pool: &deadpool_diesel::postgres::Pool,
+    email_key: String,
+) -> Result<UserModel, UserError> {
+    let conn = pool
+        .get()
+        .await
+        .map_err(|op_err| UserError::InfraError(adapt_infra_error(op_err)))?;
+
+    let res = conn
+        .interact(move |conn| {
+            users::table
+                .filter(users::email.eq(email_key))
+                .select(UserModel::as_select())
+                .get_result(conn)
+        })
+        .await
+        .map_err(|conn_err| UserError::InfraError(adapt_infra_error(conn_err)))? // connection pool error
+        .map_err(|int_err| handle_constraint_errors(int_err, None))?; // interaction error
 
     Ok(res)
 }

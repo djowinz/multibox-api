@@ -1,4 +1,5 @@
 use axum::extract::{Json, Path, Query, State};
+use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::domain::models::toodle::groups::{GroupError, GroupModel, GroupWithMessages};
@@ -16,14 +17,22 @@ pub async fn create_group(
     Ok(Json(new_group_db))
 }
 
+#[derive(Deserialize)]
 pub struct GroupCursorQuery {
     pub cursor: Option<String>,
 }
 
+impl Default for GroupCursorQuery {
+    fn default() -> Self {
+        Self { cursor: None }
+    }
+}
+
 pub async fn fetch_groups(
     state: State<AppState>,
-    Query(query): Query<GroupCursorQuery>,
+    query: Option<Query<GroupCursorQuery>>,
 ) -> Result<Json<GroupWithMessages>, GroupError> {
+    let Query(query) = query.unwrap_or_default();
     let groups =
         group_repository::fetch_all_by_page_cursor(&state.pool, query.cursor.clone()).await?;
     Ok(Json(groups))

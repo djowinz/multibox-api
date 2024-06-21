@@ -1,12 +1,13 @@
 {
+  "version": "0.2.0",
   "configurations": [
     {
       "type": "lldb",
       "request": "launch",
-      "name": "run toodle-api",
-      "program": "${workspaceFolder}/toodle-api/target/debug/toodle-api",
+      "name": "run email-api-server",
+      "program": "${workspaceFolder}/email-api-server/target/debug/email-api-server",
       "args": [],
-      "cwd": "${workspaceFolder}/toodle-api",
+      "cwd": "${workspaceFolder}/email-api-server",
       "sourceMap": {},
       "sourceLanguages": ["rust"],
       "env": {

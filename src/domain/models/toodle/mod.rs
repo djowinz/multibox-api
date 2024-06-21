@@ -1,3 +1,4 @@
+pub mod auth;
 pub mod groups;
 pub mod inbox_labels;
 pub mod messages;

@@ -26,6 +26,7 @@ pub struct NewGroup {
     pub title: Option<String>,
     pub background_color: Option<String>,
     pub collapsed: Option<bool>,
+    pub sorting_order: Option<Vec<Option<String>>>,
 }
 
 #[derive(Debug, Deserialize, AsChangeset)]
@@ -36,6 +37,7 @@ pub struct UpdateGroup {
     pub title: String,
     pub background_color: String,
     pub collapsed: bool,
+    pub sorting_order: Vec<Option<String>>,
 }
 
 pub async fn fetch_all_by_page_cursor(
