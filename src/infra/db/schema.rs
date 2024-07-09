@@ -12,16 +12,6 @@ diesel::table! {
 }
 
 diesel::table! {
-    email_grants (id) {
-        id -> Uuid,
-        user_id -> Uuid,
-        grant_token -> Text,
-        created_at -> Timestamp,
-        updated_at -> Timestamp,
-    }
-}
-
-diesel::table! {
     groups (id) {
         id -> Uuid,
         user_id -> Uuid,
@@ -33,6 +23,19 @@ diesel::table! {
         created_at -> Timestamp,
         updated_at -> Timestamp,
         sorting_order -> Nullable<Array<Nullable<Text>>>,
+    }
+}
+
+diesel::table! {
+    inbox_grants (id) {
+        id -> Uuid,
+        user_id -> Uuid,
+        grant_token -> Text,
+        refresh_token -> Text,
+        email_provider -> Text,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
+        grant_id -> Uuid,
     }
 }
 
@@ -70,16 +73,16 @@ diesel::table! {
     }
 }
 
-diesel::joinable!(email_grants -> users (user_id));
 diesel::joinable!(groups -> users (user_id));
+diesel::joinable!(inbox_grants -> users (user_id));
 diesel::joinable!(inbox_labels -> users (user_id));
 diesel::joinable!(messages -> groups (group_id));
 diesel::joinable!(messages -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     audit_logs,
-    email_grants,
     groups,
+    inbox_grants,
     inbox_labels,
     messages,
     users,

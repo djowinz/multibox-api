@@ -1,9 +1,9 @@
 use axum::http::StatusCode;
 use axum::Json;
-use diesel::prelude::Insertable;
-use diesel::query_builder::AsChangeset;
-use diesel::QueryDsl;
-use diesel::{insert_into, ExpressionMethods, RunQueryDsl, SelectableHelper};
+use diesel::{
+    insert_into, prelude::Insertable, query_builder::AsChangeset, ExpressionMethods, QueryDsl,
+    RunQueryDsl, SelectableHelper,
+};
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -75,7 +75,7 @@ pub async fn fetch_by_email(
 
 pub async fn insert(
     pool: &deadpool_diesel::postgres::Pool,
-    Json(new_user): Json<NewUser>,
+    new_user: NewUser,
 ) -> Result<UserModel, UserError> {
     let conn = pool
         .get()

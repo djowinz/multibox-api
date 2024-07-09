@@ -25,6 +25,7 @@ pub struct UserModel {
 #[derive(Debug)]
 pub enum UserError {
     InternalServerError,
+    Unauthorized(String),
     NotFound(Option<Uuid>),
     ConflictError(String),
     InfraError(InfraError),
@@ -54,6 +55,10 @@ impl IntoResponse for UserError {
             Self::ConflictError(message) => (
                 StatusCode::BAD_REQUEST,
                 format!("Unprocessable patch error: {}", message),
+            ),
+            Self::Unauthorized(message) => (
+                StatusCode::UNAUTHORIZED,
+                format!("Unauthorized: {}", message),
             ),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,

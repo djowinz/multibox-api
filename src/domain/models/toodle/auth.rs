@@ -10,3 +10,10 @@ pub struct Claims {
     pub scope: String,
     pub azp: String,
 }
+
+#[derive(Debug, Serialize)]
+pub struct AuthError {
+    pub resource: String,
+    pub message: String,
+    pub happened_at: chrono::DateTime<chrono::Utc>,
+}

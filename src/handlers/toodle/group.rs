@@ -17,7 +17,7 @@ pub async fn create_group(
     Ok(Json(new_group_db))
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct GroupCursorQuery {
     pub cursor: Option<String>,
 }

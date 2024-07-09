@@ -24,11 +24,20 @@ struct Auth0Config {
 }
 
 #[derive(Debug, Clone)]
+struct NylasConfig {
+    client_id: String,
+    client_secret: String,
+    redirect_uri: String,
+    code_verifier: String,
+    api_url: String,
+}
+
+#[derive(Debug, Clone)]
 pub struct Config {
     server: ServerConfig,
     db: DatabaseConfig,
     auth0: Auth0Config,
-    nylas_api_key: String,
+    nylas: NylasConfig,
 }
 
 impl Config {
@@ -40,12 +49,32 @@ impl Config {
         self.server.port
     }
 
+    pub fn authorization_key(&self) -> &str {
+        &self.server.authorization_key
+    }
+
     pub fn db_url(&self) -> &str {
         &self.db.url
     }
 
-    pub fn nylas_api_key(&self) -> &str {
-        &self.nylas_api_key
+    pub fn nylas_client_secret(&self) -> &str {
+        &self.nylas.client_secret
+    }
+
+    pub fn nylas_client_id(&self) -> &str {
+        &self.nylas.client_id
+    }
+
+    pub fn nylas_redirect_uri(&self) -> &str {
+        &self.nylas.redirect_uri
+    }
+
+    pub fn nylas_code_verifier(&self) -> &str {
+        &self.nylas.code_verifier
+    }
+
+    pub fn nylas_api_url(&self) -> &str {
+        &self.nylas.api_url
     }
 
     pub fn domain(&self) -> &str {
@@ -95,11 +124,19 @@ async fn init_config() -> Config {
         client_secret: env::var("AUTH0_CLIENT_SECRET").expect("AUTH0_CLIENT_SECRET must be set"),
     };
 
+    let nylas_config = NylasConfig {
+        client_id: env::var("NYLAS_CLIENT_ID").expect("NYLAS_CLIENT_ID must be set"),
+        client_secret: env::var("NYLAS_CLIENT_SECRET").expect("NYLAS_CLIENT_SECRET must be set"),
+        redirect_uri: env::var("NYLAS_REDIRECT_URI").expect("NYLAS_REDIRECT_URI must be set"),
+        code_verifier: env::var("NYLAS_CODE_VERIFIER").expect("NYLAS_CODE_VERIFIER must be set"),
+        api_url: env::var("NYLAS_API_URL").expect("NYLAS_API_URL must be set"),
+    };
+
     Config {
         server: server_config,
         db: database_config,
         auth0: auth0_config,
-        nylas_api_key: env::var("NYLAS_API_KEY").expect("NYLAS_API_KEY must be set"),
+        nylas: nylas_config,
     }
 }
 

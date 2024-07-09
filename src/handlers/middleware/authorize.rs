@@ -7,19 +7,12 @@ use axum::{
     Json,
 };
 use jsonwebtoken::{decode, decode_header, jwk::AlgorithmParameters, DecodingKey, Validation};
-use serde::Serialize;
 
 use crate::{
-    domain::models::toodle::auth::Claims, infra::repositories::user_repository::fetch_by_email,
+    domain::models::toodle::auth::{AuthError, Claims},
+    infra::repositories::user_repository::fetch_by_email,
     AppState,
 };
-
-#[derive(Debug, Serialize)]
-pub struct AuthError {
-    resource: String,
-    message: String,
-    happened_at: chrono::DateTime<chrono::Utc>,
-}
 
 pub async fn auth_middleware(
     State(state): State<AppState>,

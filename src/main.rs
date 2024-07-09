@@ -46,7 +46,7 @@ async fn main() {
     // apply pending migrations
     run_migrations(&pool).await;
 
-    let jwks = utils::jwks_utils::fetch_jwks(config.issuer())
+    let jwks = utils::auth_utils::fetch_jwks(config.issuer())
         .await
         .unwrap();
 

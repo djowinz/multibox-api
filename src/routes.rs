@@ -5,7 +5,13 @@ use tracing::Level;
 
 use crate::handlers::middleware::authorize::auth_middleware;
 use crate::handlers::toodle::group::{create_group, fetch_by_id, fetch_groups};
-use crate::handlers::toodle::user::{create_user, delete_user, fetch_user, update_user};
+use crate::handlers::toodle::inbox_grant::{
+    create_inbox_grant, delete_inbox_grant, fetch_inbox_grants, update_inbox_grant,
+};
+use crate::handlers::toodle::messages::fetch_threads_by_grant;
+use crate::handlers::toodle::user::{
+    create_user, delete_user, fetch_self, fetch_user, update_user,
+};
 use crate::AppState;
 
 pub fn app_router(state: AppState) -> Router<AppState> {
@@ -14,9 +20,11 @@ pub fn app_router(state: AppState) -> Router<AppState> {
         .nest(
             "/v1",
             Router::new()
+                .nest("/auth", auth_routes(state.clone()))
                 .nest("/users", user_routes(state.clone()))
-                .nest("/groups", group_routes(state.clone())),
-            // .nest("/messages", message_routes(state.clone())),
+                .nest("/groups", group_routes(state.clone()))
+                .nest("/inbox", message_routes(state.clone()))
+                .nest("/grants", inbox_grant_routes(state.clone())),
         )
         .layer(
             TraceLayer::new_for_http()
@@ -37,9 +45,21 @@ async fn handler_404() -> impl IntoResponse {
     )
 }
 
+fn auth_routes(state: AppState) -> Router<AppState> {
+    Router::new()
+        .route("/register", post(create_user))
+        .route(
+            "/self",
+            get(fetch_self).route_layer(middleware::from_fn_with_state(
+                state.clone(),
+                auth_middleware,
+            )),
+        )
+        .with_state(state)
+}
+
 fn user_routes(state: AppState) -> Router<AppState> {
     Router::new()
-        .route("/", post(create_user))
         .route(
             "/:id",
             get(fetch_user)
@@ -52,6 +72,18 @@ fn user_routes(state: AppState) -> Router<AppState> {
         )
         .with_state(state)
 }
+
+fn inbox_grant_routes(state: AppState) -> Router<AppState> {
+    Router::new()
+        .route("/", post(create_inbox_grant).get(fetch_inbox_grants))
+        .route("/:id", patch(update_inbox_grant).delete(delete_inbox_grant))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            auth_middleware,
+        ))
+        .with_state(state)
+}
+
 fn group_routes(state: AppState) -> Router<AppState> {
     Router::new()
         .route("/", get(fetch_groups).post(create_group))
@@ -64,10 +96,12 @@ fn group_routes(state: AppState) -> Router<AppState> {
         .with_state(state)
 }
 
-// TODO implement message handlers
-// fn message_routes(state: AppState) -> Router<AppState> {
-//     Router::new()
-//         .route("/", post(create_message))
-//         .route("/:id", patch(update_message).delete(delete_message))
-//         .with_state(state)
-// }
+fn message_routes(state: AppState) -> Router<AppState> {
+    Router::new()
+        .route("/:id/messages", get(fetch_threads_by_grant))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            auth_middleware,
+        ))
+        .with_state(state)
+}

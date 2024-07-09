@@ -50,7 +50,7 @@ impl IntoResponse for InboxLabelError {
         (
             status,
             Json(
-                json!({"resource": "UserModel", "message": err_msg, "happened_at": chrono::Utc::now() }),
+                json!({"resource": "InboxLabelModel", "message": err_msg, "happened_at": chrono::Utc::now() }),
             ),
         )
             .into_response()
