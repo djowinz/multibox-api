@@ -1,7 +1,10 @@
 use axum::extract::State;
 use serde::Serialize;
 
-use crate::{domain::models::nylas::grants::GrantModel, AppState};
+use crate::{
+    domain::models::nylas::grants::{GrantModel, GrantToken},
+    AppState,
+};
 
 #[derive(Serialize, Clone)]
 pub struct GrantClaimRequest {
@@ -17,7 +20,7 @@ pub async fn create_grant(
     state: State<AppState>,
     claim_token: String,
     redirect_uri: String,
-) -> Result<GrantModel, String> {
+) -> Result<GrantToken, String> {
     let nylas_base_url = state.config.nylas_api_url().to_string();
     let url_path = "/connect/token".to_string();
 
@@ -44,9 +47,33 @@ pub async fn create_grant(
 
     match res.status() {
         reqwest::StatusCode::OK => {
-            let res_body: GrantModel = res.json().await.unwrap();
+            let res_body: GrantToken = res.json().await.unwrap();
             Ok(res_body)
         }
         _ => Err("Failed to create grant".to_string()),
+    }
+}
+
+pub async fn fetch_grant(state: State<AppState>, grant_id: String) -> Result<GrantModel, String> {
+    let nylas_base_url = state.config.nylas_api_url().to_string();
+    let url_path = format!("/grants/{}", grant_id);
+
+    let client = reqwest::Client::new();
+    let res = client
+        .get(format!("{}{}", nylas_base_url, url_path).as_str())
+        .send()
+        .await;
+
+    let res = match res {
+        Ok(res) => res,
+        Err(e) => return Err(e.to_string()),
+    };
+
+    match res.status() {
+        reqwest::StatusCode::OK => {
+            let res_body: GrantModel = res.json().await.unwrap();
+            Ok(res_body)
+        }
+        _ => Err("Failed to fetch grant".to_string()),
     }
 }

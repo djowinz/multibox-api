@@ -25,6 +25,22 @@ pub struct ThreadModel {
     pub message_ids: Vec<Option<String>>,
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ThreadListModel {
+    pub id: String,
+    pub starred: bool,
+    pub unread: bool,
+    pub folders: Value,
+    pub object: String,
+    pub has_attachments: bool,
+    pub has_drafts: bool,
+    pub snippet: String,
+    pub subject: String,
+    pub latest_message_received_date: i32,
+    pub participants: Vec<MessageAddressModel>,
+    pub message_ids: Vec<Option<String>>,
+}
+
 pub enum ThreadError {
     InternalServerError,
     NotFound(String),

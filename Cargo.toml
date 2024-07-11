@@ -1,5 +1,5 @@
 [package]
-name = "email-api-server"
+name = "sorta-api"
 version = "0.1.0"
 edition = "2021"
 
@@ -25,3 +25,4 @@ hex_color = "3"
 reqwest = { version = "0.12.5", features = ["json"] }
 aes-gcm = "0.10.3"
 hex = "0.4.3"
+serde_path_to_error = "0.1"

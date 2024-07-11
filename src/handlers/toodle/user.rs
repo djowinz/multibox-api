@@ -49,8 +49,10 @@ pub async fn create_user(
         email: new_user.email.clone(),
         first_name: new_user.first_name.clone(),
         last_name: new_user.last_name.clone(),
+        last_login: std::time::SystemTime::now(),
     };
-    let new_user_db = user_repository::insert(&state.pool, new_user_rec).await?;
+
+    let new_user_db = user_repository::insert_or_return(&state.pool, new_user_rec).await?;
     Ok(Json(new_user_db))
 }
 

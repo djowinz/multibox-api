@@ -36,6 +36,7 @@ diesel::table! {
         created_at -> Timestamp,
         updated_at -> Timestamp,
         grant_id -> Uuid,
+        email -> Text,
     }
 }
 
@@ -70,6 +71,7 @@ diesel::table! {
         last_name -> Nullable<Text>,
         created_at -> Timestamp,
         updated_at -> Timestamp,
+        last_login -> Nullable<Timestamp>,
     }
 }
 

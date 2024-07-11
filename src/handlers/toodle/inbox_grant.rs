@@ -34,16 +34,19 @@ pub async fn create_inbox_grant(
         new_inbox_grant.redirect_uri.clone(),
     )
     .await;
+
     let grant = match nylas_grant {
         Ok(grant) => grant,
         Err(e) => return Err(InboxGrantError::NylasError(e)),
     };
+
     let new_inbox_grant_rec = NewInboxGrant {
         user_id: user.id.clone(),
         grant_id: grant.grant_id.clone(),
         grant_token: grant.access_token.clone(),
         refresh_token: "dummy".to_string(),
         email_provider: new_inbox_grant.email_provider.clone(),
+        email: grant.email.clone(),
     };
     let new_inbox_grant_db =
         inbox_grant_repository::insert_or_update(&state.pool, new_inbox_grant_rec).await?;

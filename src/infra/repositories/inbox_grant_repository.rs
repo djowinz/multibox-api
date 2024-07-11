@@ -21,6 +21,7 @@ pub struct NewInboxGrant {
     pub grant_token: String,
     pub refresh_token: String,
     pub email_provider: String,
+    pub email: String,
 }
 
 #[derive(Deserialize, AsChangeset, Clone)]

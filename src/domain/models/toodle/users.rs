@@ -3,14 +3,16 @@ use std::time::SystemTime;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
-use diesel::{deserialize::Queryable, result::DatabaseErrorKind, Selectable};
+use diesel::{
+    associations::Identifiable, deserialize::Queryable, result::DatabaseErrorKind, Selectable,
+};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use uuid::Uuid;
 
 use crate::infra::{db::schema::users, errors::InfraError};
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Queryable, Selectable, Clone)]
+#[derive(Debug, Identifiable, Serialize, Deserialize, PartialEq, Queryable, Selectable, Clone)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(table_name = users)]
 pub struct UserModel {

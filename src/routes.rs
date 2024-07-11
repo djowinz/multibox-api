@@ -47,7 +47,7 @@ async fn handler_404() -> impl IntoResponse {
 
 fn auth_routes(state: AppState) -> Router<AppState> {
     Router::new()
-        .route("/register", post(create_user))
+        .route("/callback", post(create_user))
         .route(
             "/self",
             get(fetch_self).route_layer(middleware::from_fn_with_state(

@@ -17,6 +17,7 @@ pub struct NewUser {
     pub email: String,
     pub first_name: Option<String>,
     pub last_name: Option<String>,
+    pub last_login: std::time::SystemTime,
 }
 
 #[derive(Deserialize, AsChangeset, Clone)]
@@ -73,7 +74,7 @@ pub async fn fetch_by_email(
     Ok(res)
 }
 
-pub async fn insert(
+pub async fn insert_or_return(
     pool: &deadpool_diesel::postgres::Pool,
     new_user: NewUser,
 ) -> Result<UserModel, UserError> {
@@ -86,6 +87,9 @@ pub async fn insert(
         .interact(move |conn| {
             insert_into(users::table)
                 .values(&new_user)
+                .on_conflict(users::email)
+                .do_update()
+                .set(users::last_login.eq(diesel::dsl::now))
                 .returning(UserModel::as_returning())
                 .get_result(conn)
         })
@@ -128,6 +132,7 @@ pub async fn delete(
         .get()
         .await
         .map_err(|op_err| UserError::InfraError(adapt_infra_error(op_err)))?;
+
     conn.interact(move |conn| {
         diesel::delete(users::table.filter(users::id.eq(id_key)))
             .returning(UserModel::as_returning())

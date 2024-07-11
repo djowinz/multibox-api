@@ -52,6 +52,6 @@ pub async fn fetch_threads_by_grant(
             ))
         }
     };
-    let threads = get_threads(state, inbox_grant.grant_id, query.limit).await?;
+    let threads = get_threads(state, inbox_grant.grant_id, query.limit, query.cursor).await?;
     Ok(Json(threads))
 }
