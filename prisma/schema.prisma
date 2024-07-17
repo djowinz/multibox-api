@@ -1,0 +1,63 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id    String @id @default(uuid()) @map("_id")
+  email String @unique
+  firstName String
+  lastName String
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  InboxGrant InboxGrant[]
+  InboxLabel InboxLabel[]
+  Group Group[]
+}
+
+
+model InboxGrant {
+  id    String @id @default(uuid()) @map("_id")
+  ownerId String
+  grantToken String
+  refreshToken String
+  emailProvider String
+  email String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  Owner User? @relation(fields: [ownerId], references: [id])
+  InboxLabel InboxLabel[]
+}
+
+model InboxLabel {
+  id    String @id @default(uuid()) @map("_id")
+  ownerId String
+  inboxGrantId String
+  labelId String
+  name String
+  color String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  Owner User? @relation(fields: [ownerId], references: [id])
+  InboxGrant InboxGrant? @relation(fields: [inboxGrantId], references: [id])
+}
+
+model Group {
+  id    String @id @default(uuid()) @map("_id")
+  ownerId String
+  name String?
+  backgroundColor String?
+  collapsed Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  Owner User? @relation(fields: [ownerId], references: [id])
+}
