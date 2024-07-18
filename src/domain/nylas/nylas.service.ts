@@ -19,16 +19,16 @@ export class NylasService {
         });
     }
 
-    async exchangeCodeForToken(code: string) {
+    async exchangeCodeForToken(code: string, redirectUri: string) {
         try {
             const resp = await this.ny.auth.exchangeCodeForToken({
                 clientId: this.configService.get<string>('nylas.clientId'),
                 clientSecret:
                     this.configService.get<string>('nylas.clientSecret'),
                 code,
-                redirectUri:
-                    this.configService.get<string>('nylas.redirectUri'),
+                redirectUri,
             });
+            console.log(resp);
 
             return resp;
         } catch (error) {
@@ -39,9 +39,9 @@ export class NylasService {
         }
     }
 
-    async deleteGrant(grantToken: string) {
+    async deleteGrant(grantId: string) {
         try {
-            const resp = await this.ny.grants.destroy({ grantId: grantToken });
+            const resp = await this.ny.grants.destroy({ grantId });
             return resp;
         } catch (error) {
             throw new ServiceError(
@@ -51,9 +51,10 @@ export class NylasService {
         }
     }
 
-    async fetchFolders(grantToken: string) {
+    async fetchFolders(grantId: string) {
         try {
-            const resp = await this.ny.folders.list({ identifier: grantToken });
+            const resp = await this.ny.folders.list({ identifier: grantId });
+            console.log(grantId);
             return resp;
         } catch (error) {
             throw new ServiceError(
@@ -64,13 +65,13 @@ export class NylasService {
     }
 
     async updateMessageFolder(
-        grantToken: string,
+        grantId: string,
         messageId: string,
         folderId: string,
     ) {
         try {
             const resp = await this.ny.messages.update({
-                identifier: grantToken,
+                identifier: grantId,
                 messageId,
                 requestBody: {
                     folders: [folderId],
@@ -87,14 +88,14 @@ export class NylasService {
     }
 
     async fetchThreads(
-        grantToken: string,
+        grantId: string,
         pageCursor: string,
         limit: number,
         filter?: string[],
     ) {
         try {
             const resp = await this.ny.threads.list({
-                identifier: grantToken,
+                identifier: grantId,
                 queryParams: {
                     limit,
                     in: filter,

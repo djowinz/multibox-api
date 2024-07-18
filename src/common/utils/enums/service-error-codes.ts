@@ -1,6 +1,7 @@
 export enum ServiceErrorCode {
     Prisma_P2002 = 'P2002',
     Prisma_P2018 = 'P2018',
+    Prisma_Unknown = 'PUnknown',
 
     Nylas_Token_Exchange_Error = 'NYS_TX_S5XX',
     Nylas_Folder_Retrival_Error = 'NYS_FR_S5XX',

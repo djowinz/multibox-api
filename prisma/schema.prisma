@@ -25,7 +25,7 @@ model User {
 model InboxGrant {
   id    String @id @default(uuid()) @map("_id")
   ownerId String
-  grantToken String
+  grantId String
   refreshToken String
   emailProvider String
   email String

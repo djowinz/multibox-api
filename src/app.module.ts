@@ -5,7 +5,8 @@ import appConfig from './config/app.config';
 import { AuthModule } from './auth/auth.module';
 import { NylasModule } from './domain/nylas/nylas.module';
 import { UsersModule } from './domain/sorta/users/users.module';
-import { InboxGrantsModule } from './inbox-grants/inbox-grants.module';
+import { GrantsModule } from './domain/sorta/inbox/grants/grants.module';
+import { FoldersModule } from './domain/sorta/inbox/folders/folders.module';
 
 @Module({
     imports: [
@@ -15,7 +16,8 @@ import { InboxGrantsModule } from './inbox-grants/inbox-grants.module';
         NylasModule,
         AuthModule,
         UsersModule,
-        InboxGrantsModule,
+        GrantsModule,
+        FoldersModule,
     ],
     controllers: [],
     providers: [],
