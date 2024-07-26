@@ -7,6 +7,7 @@ import { NylasModule } from './domain/nylas/nylas.module';
 import { UsersModule } from './domain/sorta/users/users.module';
 import { GrantsModule } from './domain/sorta/inbox/grants/grants.module';
 import { FoldersModule } from './domain/sorta/inbox/folders/folders.module';
+import { MessagesModule } from './domain/sorta/inbox/messages/messages.module';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { FoldersModule } from './domain/sorta/inbox/folders/folders.module';
         UsersModule,
         GrantsModule,
         FoldersModule,
+        MessagesModule,
     ],
     controllers: [],
     providers: [],

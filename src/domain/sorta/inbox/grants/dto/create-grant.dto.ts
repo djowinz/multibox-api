@@ -7,7 +7,7 @@ export class CreateGrantDto {
 
     @IsNotEmpty()
     @IsString()
-    readonly emailProvider: string; 
+    readonly emailProvider: string;
 
     @IsNotEmpty()
     @IsString()

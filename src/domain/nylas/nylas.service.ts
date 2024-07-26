@@ -105,6 +105,7 @@ export class NylasService {
 
             return resp;
         } catch (error) {
+            console.log(error);
             throw new ServiceError(
                 `Failed to fetch threads: ${error.message}`,
                 ServiceErrorCode.Nylas_Thread_Retrival_Error,

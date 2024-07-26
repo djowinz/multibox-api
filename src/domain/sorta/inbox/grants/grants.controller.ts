@@ -3,9 +3,6 @@ import {
     Get,
     Post,
     Body,
-    Patch,
-    Param,
-    Delete,
     Request,
     UseGuards,
     BadRequestException,
@@ -26,16 +23,13 @@ export class GrantsController {
     ) {}
 
     @Post()
-    async create(
-        @Request() req,
-        @Body() createInboxGrantDto: CreateGrantDto,
-    ) {
+    async create(@Request() req, @Body() createInboxGrantDto: CreateGrantDto) {
         const userId = req.user.id;
 
         try {
             const tokenExchange = await this.nylasService.exchangeCodeForToken(
                 createInboxGrantDto.claimToken,
-                createInboxGrantDto.redirectUri
+                createInboxGrantDto.redirectUri,
             );
 
             return await this.inboxGrantsService.create({
@@ -47,11 +41,14 @@ export class GrantsController {
                 emailProvider: tokenExchange.provider,
                 email: tokenExchange.email,
                 grantId: tokenExchange.grantId,
-                refreshToken: "",
+                refreshToken: '',
                 deletedAt: null,
             });
         } catch (error) {
-            if (Object(error).hasOwnProperty('code') && error.code === ServiceErrorCode.Nylas_Token_Exchange_Error) {
+            if (
+                Object(error).hasOwnProperty('code') &&
+                error.code === ServiceErrorCode.Nylas_Token_Exchange_Error
+            ) {
                 throw new BadRequestException(error.message);
             } else {
                 throw new InternalServerErrorException(error.message);
