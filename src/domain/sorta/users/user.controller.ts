@@ -34,7 +34,7 @@ export class UserController {
             if (
                 (error as ServiceError).code === ServiceErrorCode.Prisma_P2002
             ) {
-                console.log(error);
+                console.error(error);
                 throw new ConflictException(error);
             }
             throw new BadRequestException(error.message);
@@ -43,7 +43,6 @@ export class UserController {
 
     @Delete()
     async deleteUser(@Request() req): Promise<User> {
-        console.log(req.user);
         try {
             return await this.userService.deleteUser(req.user.id);
         } catch (error) {

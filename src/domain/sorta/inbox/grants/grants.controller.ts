@@ -59,7 +59,6 @@ export class GrantsController {
     @Get()
     async findAll(@Request() req) {
         const userId = req.user.id;
-        console.log(userId);
         return await this.inboxGrantsService.findAll(userId);
     }
 

@@ -49,7 +49,7 @@ export class JwtStrategy extends PassportStrategy(BaseStrategy) {
             const user = await this.userService.getUserByEmail(payload.email);
             return user;
         } catch (error) {
-            console.log(error);
+            console.error(error);
             throw new UnauthorizedException('User not found');
         }
     }

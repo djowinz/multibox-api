@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/db/prisma.service';
 import { Prisma } from '@prisma/client';
 import { ServiceError } from 'src/common/utils/custom.error';
@@ -7,13 +7,14 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class GrantsService {
+    private readonly logger = new Logger(GrantsService.name);
     constructor(private prisma: PrismaService) {}
 
     async create(data: Prisma.InboxGrantCreateInput) {
         try {
             return await this.prisma.client.inboxGrant.create({ data });
         } catch (error) {
-            console.log(error);
+            this.logger.error(error);
             throw new ServiceError(
                 'Failed to create inboxGrant',
                 ServiceErrorCode.Prisma_Unknown,
@@ -28,9 +29,9 @@ export class GrantsService {
                     ownerId: userId,
                 },
             });
-            console.log(grants);
             return grants;
         } catch (error) {
+            this.logger.error(error);
             throw new ServiceError(
                 'Failed to fetch inboxGrants',
                 ServiceErrorCode.Prisma_Unknown,
@@ -49,11 +50,13 @@ export class GrantsService {
         } catch (error) {
             const prismaError = error as PrismaClientKnownRequestError;
             if (prismaError.code === ServiceErrorCode.Prisma_P2018) {
+                this.logger.debug(`InboxGrant: ${id} not found`);
                 throw new ServiceError(
                     `InboxGrant: ${id} not found`,
                     ServiceErrorCode.Prisma_P2018,
                 );
             }
+            this.logger.error(error);
             throw new ServiceError(
                 'Failed to fetch inboxGrant',
                 ServiceErrorCode.Prisma_Unknown,
@@ -77,11 +80,13 @@ export class GrantsService {
         } catch (error) {
             const prismaError = error as PrismaClientKnownRequestError;
             if (prismaError.code === ServiceErrorCode.Prisma_P2018) {
+                this.logger.debug(`InboxGrant: ${id} not found`);
                 throw new ServiceError(
                     `InboxGrant: ${id} not found`,
                     ServiceErrorCode.Prisma_P2018,
                 );
             }
+            this.logger.error(error);
             throw new ServiceError(
                 'Failed to update inboxGrant',
                 ServiceErrorCode.Prisma_Unknown,
@@ -98,11 +103,13 @@ export class GrantsService {
         } catch (error) {
             const prismaError = error as PrismaClientKnownRequestError;
             if (prismaError.code === ServiceErrorCode.Prisma_P2018) {
+                this.logger.debug(`InboxGrant: ${id} not found`);
                 throw new ServiceError(
                     `InboxGrant: ${id} not found`,
                     ServiceErrorCode.Prisma_P2018,
                 );
             }
+            this.logger.error(error);
             throw new ServiceError(
                 'Failed to delete inboxGrant',
                 ServiceErrorCode.Prisma_Unknown,

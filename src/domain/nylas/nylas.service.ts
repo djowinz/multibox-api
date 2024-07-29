@@ -28,7 +28,6 @@ export class NylasService {
                 code,
                 redirectUri,
             });
-            console.log(resp);
 
             return resp;
         } catch (error) {
@@ -54,7 +53,6 @@ export class NylasService {
     async fetchFolders(grantId: string) {
         try {
             const resp = await this.ny.folders.list({ identifier: grantId });
-            console.log(grantId);
             return resp;
         } catch (error) {
             throw new ServiceError(
@@ -105,7 +103,7 @@ export class NylasService {
 
             return resp;
         } catch (error) {
-            console.log(error);
+            console.error(error);
             throw new ServiceError(
                 `Failed to fetch threads: ${error.message}`,
                 ServiceErrorCode.Nylas_Thread_Retrival_Error,
