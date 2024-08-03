@@ -3,6 +3,7 @@ import {
     Controller,
     Headers,
     InternalServerErrorException,
+    Logger,
     Post,
     UnauthorizedException,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { CallbackDto } from './dto/callback.dto';
 
 @Controller('auth')
 export class AuthController {
+    private readonly logger = new Logger(AuthController.name);
     constructor(
         private readonly userService: UserService,
         private readonly configService: ConfigService,
@@ -31,11 +33,13 @@ export class AuthController {
             )
         ) {
             if (headers[SortaApiHeaders.SORTA_AUTH_KEY] !== authKey) {
+                this.logger.error('Invalid auth key in header');
                 throw new UnauthorizedException(
                     'Unauthorized to access this resource',
                 );
             }
         } else {
+            this.logger.error('Missing auth header');
             throw new UnauthorizedException(
                 'Unauthorized to access this resource',
             );
@@ -47,6 +51,7 @@ export class AuthController {
                 deletedAt: null,
             });
         } catch (error) {
+            this.logger.error(error);
             throw new InternalServerErrorException(error.message);
         }
     }
