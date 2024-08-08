@@ -1,1 +1,0 @@
-{"version":3,"file":"bulk-update-message.dto.js","sourceRoot":"","sources":["../../../../../../src/domain/multibox/inbox/messages/dto/bulk-update-message.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qDAAsD;AACtD,6DAAwD;AAExD,MAAa,oBAAoB;CAOhC;AAPD,oDAOC;AAJY;IAFR,IAAA,yBAAO,GAAE;IACT,IAAA,4BAAU,GAAE;;uDACgB;AAGpB;IADR,IAAA,4BAAU,GAAE;8BACI,qCAAgB;oDAAC"}
