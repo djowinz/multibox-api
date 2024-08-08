@@ -60,7 +60,7 @@ export class UserService {
             });
         } catch (error) {
             throw new ServiceError(
-                'Failed to create user',
+                `Failed to create user: ${error.message}`,
                 ServiceErrorCode.Unknown,
             );
         }
