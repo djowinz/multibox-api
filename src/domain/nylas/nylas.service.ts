@@ -62,41 +62,94 @@ export class NylasService {
         }
     }
 
-    async updateMessageFolder(
+    async updateObjectAttributes(
         grantId: string,
-        messageId: string,
-        folderId: string,
+        objectId: string,
+        update: any,
+        isMessage: boolean,
     ) {
         try {
-            const resp = await this.ny.messages.update({
-                identifier: grantId,
-                messageId,
-                requestBody: {
-                    folders: [folderId],
-                },
-            });
+            let resp = null;
+            if (isMessage) {
+                resp = await this.ny.messages.update({
+                    identifier: grantId,
+                    messageId: objectId,
+                    requestBody: update,
+                });
+
+                console.log(resp);
+            } else {
+                resp = await this.ny.threads.update({
+                    identifier: grantId,
+                    threadId: objectId,
+                    requestBody: update,
+                });
+
+                console.log(resp);
+            }
 
             return resp;
         } catch (error) {
             throw new ServiceError(
-                `Failed to update message folder: ${error.message}`,
-                ServiceErrorCode.Nylas_Folder_Patch_Error,
+                `Failed to update ${isMessage ? 'message' : 'thread'} attributes: ${error.message}`,
+                ServiceErrorCode.Nylas_Object_Patch_Error,
+            );
+        }
+    }
+
+    async deleteObject(grantId: string, objectId: string, isMessage: boolean) {
+        try {
+            let resp = null;
+            if (isMessage) {
+                resp = await this.ny.messages.destroy({
+                    identifier: grantId,
+                    messageId: objectId,
+                });
+            } else {
+                resp = await this.ny.threads.destroy({
+                    identifier: grantId,
+                    threadId: objectId,
+                });
+            }
+
+            return resp;
+        } catch (error) {
+            throw new ServiceError(
+                `Failed to delete ${isMessage ? 'message' : 'thread'}: ${error.message}`,
+                ServiceErrorCode.Nylas_Object_Delete_Error,
+            );
+        }
+    }
+
+    async fetchMessage(grantId: string, messagesId: string) {
+        try {
+            return await this.ny.messages.find({
+                identifier: grantId,
+                messageId: messagesId,
+            });
+        } catch (error) {
+            console.error(error);
+            throw new ServiceError(
+                `Failed to fetch message: ${error.message}`,
+                ServiceErrorCode.Nylas_Message_Retrival_Error,
             );
         }
     }
 
     async fetchThreads(
         grantId: string,
-        pageCursor: string,
+        folderId: string,
         limit: number,
-        filter?: string[],
+        pageCursor?: string,
+        filter?: string,
     ) {
         try {
             const resp = await this.ny.threads.list({
                 identifier: grantId,
                 queryParams: {
                     limit,
-                    in: filter,
+                    in: [folderId],
+                    searchQueryNative: filter,
                     pageToken: pageCursor,
                 },
             });

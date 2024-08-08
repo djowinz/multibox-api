@@ -6,7 +6,7 @@ import authConfig from '../config/auth.config';
 
 import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
-import { UsersModule } from 'src/domain/sorta/users/users.module';
+import { UsersModule } from 'src/domain/multibox/users/users.module';
 
 @Module({
     imports: [

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SortaApiHeaders } from 'src/common/utils/enums/headers';
-import { UserService } from 'src/domain/sorta/users/user.service';
+import { UserService } from 'src/domain/multibox/users/user.service';
 import { CallbackDto } from './dto/callback.dto';
 
 @Controller('auth')

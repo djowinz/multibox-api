@@ -5,7 +5,7 @@ import { Strategy as BaseStrategy, ExtractJwt } from 'passport-jwt';
 import { passportJwtSecret } from 'jwks-rsa';
 
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { UserService } from 'src/domain/sorta/users/user.service';
+import { UserService } from 'src/domain/multibox/users/user.service';
 import { User } from '@prisma/client';
 
 @Injectable()

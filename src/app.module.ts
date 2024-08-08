@@ -4,10 +4,10 @@ import { ConfigModule } from '@nestjs/config';
 import appConfig from './config/app.config';
 import { AuthModule } from './auth/auth.module';
 import { NylasModule } from './domain/nylas/nylas.module';
-import { UsersModule } from './domain/sorta/users/users.module';
-import { GrantsModule } from './domain/sorta/inbox/grants/grants.module';
-import { FoldersModule } from './domain/sorta/inbox/folders/folders.module';
-import { MessagesModule } from './domain/sorta/inbox/messages/messages.module';
+import { UsersModule } from './domain/multibox/users/users.module';
+import { GrantsModule } from './domain/multibox/inbox/grants/grants.module';
+import { FoldersModule } from './domain/multibox/inbox/folders/folders.module';
+import { MessagesModule } from './domain/multibox/inbox/messages/messages.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 @Module({
