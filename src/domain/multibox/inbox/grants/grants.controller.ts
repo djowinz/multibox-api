@@ -7,6 +7,7 @@ import {
     UseGuards,
     BadRequestException,
     InternalServerErrorException,
+    Logger,
 } from '@nestjs/common';
 import { GrantsService } from './grants.service';
 import { CreateGrantDto } from './dto/create-grant.dto';
@@ -17,6 +18,7 @@ import { ServiceErrorCode } from 'src/common/utils/enums/service-error-codes';
 @UseGuards(AuthGuard('jwt'))
 @Controller('grants')
 export class GrantsController {
+    private readonly logger = new Logger(GrantsController.name);
     constructor(
         private readonly inboxGrantsService: GrantsService,
         private readonly nylasService: NylasService,
@@ -45,6 +47,7 @@ export class GrantsController {
                 deletedAt: null,
             });
         } catch (error) {
+            this.logger.error(error);
             if (
                 Object(error).hasOwnProperty('code') &&
                 error.code === ServiceErrorCode.Nylas_Token_Exchange_Error
