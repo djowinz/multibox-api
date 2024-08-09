@@ -26,6 +26,7 @@ export class GrantsController {
 
     @Post()
     async create(@Request() req, @Body() createInboxGrantDto: CreateGrantDto) {
+        this.logger.log(JSON.stringify(createInboxGrantDto));
         const userId = req.user.id;
 
         try {
