@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsHexColor, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateFolderDto {
     @IsNotEmpty()
@@ -7,4 +7,16 @@ export class CreateFolderDto {
 
     @IsArray()
     readonly attributes: string[];
+
+    @IsString()
+    @IsOptional()
+    readonly parentId: string;
+
+    @IsOptional()
+    @IsHexColor()
+    readonly textColor: string;
+
+    @IsOptional()
+    @IsHexColor()
+    readonly backgroundColor: string;
 }

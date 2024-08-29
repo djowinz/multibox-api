@@ -12,14 +12,19 @@ import { NylasService } from 'src/domain/nylas/nylas.service';
 import { AuthGuard } from '@nestjs/passport';
 import { GrantsService } from '../grants/grants.service';
 import { ServiceErrorCode } from 'src/common/utils/enums/service-error-codes';
+import { Folder as FolderEntity } from './entities/folder.entity';
 import { Folder } from 'nylas';
+import { FoldersService } from './folders.service';
+
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('folders')
 export class FoldersController {
+    folderService: any;
     constructor(
         private readonly nylasService: NylasService,
         private readonly grantService: GrantsService,
+        private readonly foldersService: FoldersService,
     ) {}
 
     // @Post()
@@ -28,7 +33,7 @@ export class FoldersController {
     // }
 
     @Get(':grantId')
-    async findAll(@Request() req, @Param('grantId') grantId: string) {
+    async findAll(@Request() req, @Param('grantId') grantId: string): Promise<FolderEntity[]> {
         const userId = req.user.id;
 
         try {
@@ -50,6 +55,10 @@ export class FoldersController {
                     totalCount: folder.totalCount,
                     unreadCount: folder.unreadCount,
                     systemFolder: folder.systemFolder,
+                    childCount: folder.childCount,
+                    parentId: folder.parentId,
+                    backgroundColor: folder.backgroundColor,
+                    textColor: folder.textColor,
                 };
             });
         } catch (error) {
@@ -60,6 +69,12 @@ export class FoldersController {
                 throw new BadRequestException(error.message);
             }
         }
+    }
+
+    @Get(':grantId/displayed')
+    async findDisplayed(@Request() req, @Param('grantId') grantId: string) {
+        const userId = req.user.id;
+        return await this.foldersService.findAll(userId, grantId);
     }
 
     // @Get(':id')

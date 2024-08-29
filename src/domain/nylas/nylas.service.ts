@@ -162,4 +162,10 @@ export class NylasService {
             );
         }
     }
+
+    // async updateFolder(
+    //     grantId: string,
+    //     folderId: string,
+    //     update: 
+    // )
 }

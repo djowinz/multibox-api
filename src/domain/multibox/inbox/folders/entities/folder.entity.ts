@@ -5,4 +5,8 @@ export class Folder {
     totalCount: number;
     unreadCount: number;
     systemFolder: boolean;
+    childCount: number;
+    parentId: string;
+    backgroundColor: string;
+    textColor: string;
 }
