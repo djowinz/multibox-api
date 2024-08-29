@@ -1,8 +1,8 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { PrismaService } from "src/db/prisma.service";
-import { Prisma } from "@prisma/client";
-import { ServiceErrorCode } from "src/common/utils/enums/service-error-codes";
-import { ServiceError } from "src/common/utils/custom.error";
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from 'src/db/prisma.service';
+import { Prisma } from '@prisma/client';
+import { ServiceErrorCode } from 'src/common/utils/enums/service-error-codes';
+import { ServiceError } from 'src/common/utils/custom.error';
 
 @Injectable()
 export class FoldersService {
@@ -39,7 +39,11 @@ export class FoldersService {
         }
     }
 
-    async update(userId: string, id: string, data: Prisma.InboxLabelUpdateInput) {
+    async update(
+        userId: string,
+        id: string,
+        data: Prisma.InboxLabelUpdateInput,
+    ) {
         try {
             return await this.prisma.client.inboxLabel.update({
                 where: {

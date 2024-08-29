@@ -163,9 +163,53 @@ export class NylasService {
         }
     }
 
-    // async updateFolder(
-    //     grantId: string,
-    //     folderId: string,
-    //     update: 
-    // )
+    async createFolder(
+        grantId: string,
+        body: {
+            name: string;
+            parentId?: string;
+            textColor?: string;
+            backgroundColor?: string;
+        },
+    ) {
+        try {
+            const resp = await this.ny.folders.create({
+                identifier: grantId,
+                requestBody: body,
+            });
+
+            return resp;
+        } catch (error) {
+            throw new ServiceError(
+                `Failed to create folder: ${error.message}`,
+                ServiceErrorCode.Nylas_Folder_Create_Error,
+            );
+        }
+    }
+
+    async updateFolder(
+        grantId: string,
+        folderId: string,
+        update: {
+            name?: string;
+            parentId?: string;
+            textColor?: string;
+            backgroundColor?: string;
+        },
+    ) {
+        try {
+            const resp = await this.ny.folders.update({
+                identifier: grantId,
+                folderId,
+                requestBody: update,
+            });
+
+            return resp;
+        } catch (error) {
+            throw new ServiceError(
+                `Failed to update folder: ${error.message}`,
+                ServiceErrorCode.Nylas_Folder_Update_Error,
+            );
+        }
+    }
 }
