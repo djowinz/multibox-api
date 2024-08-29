@@ -30,6 +30,8 @@ export class GrantsController {
         const userId = req.user.id;
 
         try {
+            this.logger.log(`Redirect URI: ${createInboxGrantDto.redirectUri}`);
+            console.log(`Redirect URI: ${createInboxGrantDto.redirectUri}`);
             const tokenExchange = await this.nylasService.exchangeCodeForToken(
                 createInboxGrantDto.claimToken,
                 createInboxGrantDto.redirectUri,
