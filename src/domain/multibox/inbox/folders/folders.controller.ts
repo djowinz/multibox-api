@@ -9,6 +9,8 @@ import {
     InternalServerErrorException,
     Post,
     Body,
+    Patch,
+    Delete,
 } from '@nestjs/common';
 import { NylasService } from 'src/domain/nylas/nylas.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -40,6 +42,7 @@ export class FoldersController {
         try {
             const grant = await this.grantService.findOne(userId, grantId);
             if (!grant) {
+                console.log('no grant!');
                 throw new UnauthorizedException('Invalid grantId provided');
             }
 
@@ -50,7 +53,7 @@ export class FoldersController {
             );
 
             // persist label in db
-            return this.foldersService.create({
+            const serverRecord = await this.foldersService.create({
                 name: createFolderDto.name,
                 folderId: providerFolder.data.id,
                 backgroundColor: providerFolder.data.backgroundColor,
@@ -66,17 +69,58 @@ export class FoldersController {
                     },
                 },
             });
+
+            return {
+                provider: providerFolder.data,
+                server: serverRecord,
+            }
         } catch (error) {
+            console.log(error);
             if (error.code === ServiceErrorCode.Prisma_Unknown) {
                 throw new InternalServerErrorException(error.message);
             }
-            if (error.code === ServiceErrorCode.Nylas_Folder_Retrival_Error) {
+            if (error.code === ServiceErrorCode.Nylas_Folder_Create_Error) {
                 throw new BadRequestException(error.message);
             }
         }
     }
 
-    @Post(':grantId/:folderId')
+    // folderId is the id from the provider not our db
+    @Post(':grantId/:providerFolderId/display')
+    async addToInboxView(@Request() req, @Param('grantId') grantId: string, @Param('providerFolderId') folderId: string) {
+        const userId = req.user.id;
+        try {
+            const grant = await this.grantService.findOne(userId, grantId);
+            if (!grant) {
+                throw new UnauthorizedException('Invalid grantId provided');
+            }
+
+            // check if folder exists in provider - first
+            const providerFolder = await this.nylasService.fetchFolder(grant.grantId, folderId);
+
+            // create folder in db
+            return await this.foldersService.create({
+                name: providerFolder.data.name,
+                folderId: providerFolder.data.id,
+                backgroundColor: providerFolder.data.backgroundColor,
+                textColor: providerFolder.data.textColor,
+                InboxGrant: {
+                    connect: {
+                        id: grant.id,
+                    },
+                },
+                Owner: {
+                    connect: {
+                        id: userId,
+                    },
+                },
+            });
+        } catch (error) {
+
+        }
+    }
+
+    @Patch(':grantId/:folderId')
     async update(
         @Request() req,
         @Param('grantId') grantId: string,
@@ -159,6 +203,37 @@ export class FoldersController {
     @Get(':grantId/displayed')
     async findDisplayed(@Request() req, @Param('grantId') grantId: string) {
         const userId = req.user.id;
-        return await this.foldersService.findAll(userId, grantId);
+        try {
+            const grant = await this.grantService.findOne(userId, grantId);
+            if (!grant) {
+                throw new UnauthorizedException('Invalid grantId provided');
+            }
+            return await this.foldersService.findAll(userId, grantId);
+        } catch (error) {
+            if (error.code === ServiceErrorCode.Prisma_Unknown) {
+                throw new InternalServerErrorException(error.message);
+            }
+        }
+    }
+
+    // folderId is the id from the provider not our db
+    @Delete(':grantId/:providerFolderId')
+    async deleteFolder(@Request() req, @Param('grantId') grantId: string, @Param('providerFolderId') folderId: string) {
+        const userId = req.user.id;
+        try {
+            const grant = await this.grantService.findOne(userId, grantId);
+            if (!grant) {
+                throw new UnauthorizedException('Invalid grantId provided');
+            }
+            await this.nylasService.deleteFolder(grant.grantId, folderId);
+            return await this.foldersService.remove(userId, folderId);
+        } catch (error) {
+            if (error.code === ServiceErrorCode.Prisma_Unknown) {
+                throw new InternalServerErrorException(error.message);
+            }
+            if (error.code === ServiceErrorCode.Nylas_Object_Delete_Error) {
+                throw new BadRequestException(error.message);
+            }
+        }
     }
 }

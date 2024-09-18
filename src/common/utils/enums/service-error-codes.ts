@@ -7,6 +7,7 @@ export enum ServiceErrorCode {
     Nylas_Folder_Retrival_Error = 'NYS_FR_S521',
     Nylas_Folder_Create_Error = 'NYS_FC_S522',
     Nylas_Folder_Update_Error = 'NYS_FU_S523',
+    Nylas_Folder_Delete_Error = 'NYS_FD_S524',
     Nylas_Message_Retrival_Error = 'NYS_MR_S534',
     Nylas_Object_Patch_Error = 'NYS_OP_S591',
     Nylas_Object_Delete_Error = 'NYS_OD_S592',

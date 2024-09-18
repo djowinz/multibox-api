@@ -27,6 +27,23 @@ export class FoldersService {
         }
     }
 
+    async findbyProviderId(userId: string, providerId: string) {
+        try {
+            return await this.prisma.client.inboxLabel.findFirst({
+                where: {
+                    ownerId: userId,
+                    folderId: providerId,
+                },
+            });
+        } catch (error) {
+            this.logger.error(error);
+            throw new ServiceError(
+                'Failed to fetch folder by providerId',
+                ServiceErrorCode.Prisma_Unknown,
+            );
+        }
+    }
+
     async create(data: Prisma.InboxLabelCreateInput) {
         try {
             return await this.prisma.client.inboxLabel.create({ data });

@@ -1,4 +1,4 @@
-import Nylas from 'nylas';
+import Nylas, { Folder, NylasResponse } from 'nylas';
 
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -163,6 +163,20 @@ export class NylasService {
         }
     }
 
+    async fetchFolder(grantId: string, folderId: string): Promise<NylasResponse<Folder>> {
+        try {
+            return await this.ny.folders.find({
+                identifier: grantId,
+                folderId,
+            });
+        } catch (error) {
+            throw new ServiceError(
+                `Failed to fetch folder: ${error.message}`,
+                ServiceErrorCode.Nylas_Folder_Retrival_Error,
+            );
+        }
+    }
+
     async createFolder(
         grantId: string,
         body: {
@@ -171,7 +185,7 @@ export class NylasService {
             textColor?: string;
             backgroundColor?: string;
         },
-    ) {
+    ): Promise<NylasResponse<Folder>> {
         try {
             const resp = await this.ny.folders.create({
                 identifier: grantId,
@@ -180,6 +194,7 @@ export class NylasService {
 
             return resp;
         } catch (error) {
+            console.log(error);
             throw new ServiceError(
                 `Failed to create folder: ${error.message}`,
                 ServiceErrorCode.Nylas_Folder_Create_Error,
@@ -209,6 +224,22 @@ export class NylasService {
             throw new ServiceError(
                 `Failed to update folder: ${error.message}`,
                 ServiceErrorCode.Nylas_Folder_Update_Error,
+            );
+        }
+    }
+
+    async deleteFolder(grantId: string, folderId: string) {
+        try {
+            const resp = await this.ny.folders.destroy({
+                identifier: grantId,
+                folderId,
+            });
+
+            return resp;
+        } catch (error) {
+            throw new ServiceError(
+                `Failed to delete folder: ${error.message}`,
+                ServiceErrorCode.Nylas_Folder_Delete_Error,
             );
         }
     }

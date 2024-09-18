@@ -33,7 +33,7 @@ export class JwtStrategy extends PassportStrategy(BaseStrategy) {
 
     async validate(payload: JwtPayload): Promise<User> {
         const minimumScope = ['openid', 'profile', 'email'];
-
+        console.log(payload);
         if (
             payload?.scope
                 ?.split(' ')
