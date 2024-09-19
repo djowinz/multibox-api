@@ -163,7 +163,28 @@ export class NylasService {
         }
     }
 
-    async fetchFolder(grantId: string, folderId: string): Promise<NylasResponse<Folder>> {
+    async fetchMessagesByThread(grantId: string, threadId: string) {
+        try {
+            const resp = await this.ny.messages.list({
+                identifier: grantId,
+                queryParams: {
+                    threadId,
+                },
+            });
+
+            return resp;
+        } catch (error) {
+            throw new ServiceError(
+                `Failed to fetch messages by thread: ${error.message}`,
+                ServiceErrorCode.Nylas_Message_Retrival_Error,
+            );
+        }
+    }
+
+    async fetchFolder(
+        grantId: string,
+        folderId: string,
+    ): Promise<NylasResponse<Folder>> {
         try {
             return await this.ny.folders.find({
                 identifier: grantId,

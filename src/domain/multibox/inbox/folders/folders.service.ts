@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/db/prisma.service';
-import { Prisma } from '@prisma/client';
+import { InboxLabel, Prisma } from '@prisma/client';
 import { ServiceErrorCode } from 'src/common/utils/enums/service-error-codes';
 import { ServiceError } from 'src/common/utils/custom.error';
 
@@ -44,7 +44,7 @@ export class FoldersService {
         }
     }
 
-    async create(data: Prisma.InboxLabelCreateInput) {
+    async create(data: Prisma.InboxLabelCreateInput): Promise<InboxLabel> {
         try {
             return await this.prisma.client.inboxLabel.create({ data });
         } catch (error) {
@@ -80,9 +80,9 @@ export class FoldersService {
 
     async remove(ownerId: string, id: string) {
         try {
-            return await this.prisma.client.inboxLabel.delete({
+            return await this.prisma.client.inboxLabel.deleteMany({
                 ownerId,
-                id,
+                folderId: id,
             });
         } catch (error) {
             this.logger.error(error);

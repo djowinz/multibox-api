@@ -6,7 +6,6 @@ import {
     Get,
     InternalServerErrorException,
     Param,
-    // Post,
     Put,
     Query,
     Request,
@@ -53,6 +52,33 @@ export class MessagesController {
             return await this.nylasService.fetchMessage(
                 grant.grantId,
                 messageId,
+            );
+        } catch (error) {
+            if (error.code === ServiceErrorCode.Prisma_Unknown) {
+                throw new InternalServerErrorException(error.message);
+            }
+            if (error.code === ServiceErrorCode.Nylas_Message_Retrival_Error) {
+                throw new BadRequestException(error.message);
+            }
+        }
+    }
+
+    @Get(':grantId/:threadId/messages')
+    async findAllMessagesByThread(
+        @Request() req,
+        @Param('grantId') grantId: string,
+        @Param('threadId') threadId: string,
+    ) {
+        const userId = req.user.id;
+        try {
+            const grant = await this.grantService.findOne(userId, grantId);
+            if (!grant) {
+                throw new UnauthorizedException('Invalid grantId provided');
+            }
+
+            return await this.nylasService.fetchMessagesByThread(
+                grant.grantId,
+                threadId,
             );
         } catch (error) {
             if (error.code === ServiceErrorCode.Prisma_Unknown) {
