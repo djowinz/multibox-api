@@ -30,6 +30,62 @@ export class FoldersController {
         private readonly foldersService: FoldersService,
     ) {}
 
+    @Get(':grantId')
+    async findAll(
+        @Request() req,
+        @Param('grantId') grantId: string,
+    ): Promise<any> {
+        const userId = req.user.id;
+
+        try {
+            const grant = await this.grantService.findOne(userId, grantId);
+            if (!grant) {
+                throw new UnauthorizedException('Invalid grantId provided');
+            }
+            // Fetch provider folders
+            const { data } = await this.nylasService.fetchFolders(
+                grant.grantId,
+            );
+
+            if (!data) {
+                return [];
+            }
+
+            // Fetch displayed folders
+            const displayedFolders = await this.foldersService.findAll(
+                userId,
+                grantId,
+            );
+
+            const providerStripped = data.map((folder: Folder) => {
+                return {
+                    id: folder.id,
+                    name: folder.name,
+                    attributes: folder.attributes,
+                    totalCount: folder.totalCount,
+                    unreadCount: folder.unreadCount,
+                    systemFolder: folder.systemFolder,
+                    childCount: folder.childCount,
+                    parentId: folder.parentId,
+                    backgroundColor: folder.backgroundColor,
+                    textColor: folder.textColor,
+                };
+            });
+
+            return {
+                provider: providerStripped,
+                displayed: displayedFolders,
+            };
+        } catch (error) {
+            if (error.code === ServiceErrorCode.Prisma_Unknown) {
+                throw new InternalServerErrorException(error.message);
+            }
+            if (error.code === ServiceErrorCode.Nylas_Folder_Retrival_Error) {
+                throw new BadRequestException(error.message);
+            }
+        }
+    }
+
     @Post(':grantId')
     async create(
         @Request() req,
@@ -54,12 +110,13 @@ export class FoldersController {
             // persist label in db
             const serverRecord = await this.foldersService.create({
                 name: createFolderDto.name,
-                folderId: providerFolder.data.id,
+                providerId: providerFolder.data.id,
                 backgroundColor: providerFolder.data.backgroundColor,
                 textColor: providerFolder.data.textColor,
+                deletedAt: null,
                 InboxGrant: {
                     connect: {
-                        id: grant.id,
+                        id: grantId,
                     },
                 },
                 Owner: {
@@ -91,6 +148,7 @@ export class FoldersController {
         @Param('grantId') grantId: string,
         @Param('providerFolderId') folderId: string,
     ) {
+        console.log('hit!!!');
         const userId = req.user.id;
         try {
             const grant = await this.grantService.findOne(userId, grantId);
@@ -106,20 +164,21 @@ export class FoldersController {
 
             // create folder in db
             const folder = await this.foldersService.create({
-                name: providerFolder.data.name,
-                folderId: providerFolder.data.id,
-                backgroundColor: providerFolder.data.backgroundColor,
-                textColor: providerFolder.data.textColor,
-                InboxGrant: {
-                    connect: {
-                        id: grant.id,
-                    },
-                },
                 Owner: {
                     connect: {
                         id: userId,
                     },
                 },
+                InboxGrant: {
+                    connect: {
+                        id: grantId,
+                    },
+                },
+                name: providerFolder.data.name,
+                providerId: providerFolder.data.id,
+                backgroundColor: providerFolder.data.backgroundColor,
+                textColor: providerFolder.data.textColor,
+                deletedAt: null,
             });
 
             // return latest messages within the folder
@@ -142,7 +201,7 @@ export class FoldersController {
         }
     }
 
-    @Delete(':grantId/:folderId/display')
+    @Delete(':grantId/:providerFolderId/display')
     async removeFromInboxView(
         @Request() req,
         @Param('grantId') grantId: string,
@@ -167,11 +226,11 @@ export class FoldersController {
         }
     }
 
-    @Patch(':grantId/:folderId')
+    @Patch(':grantId/:providerFolderId')
     async update(
         @Request() req,
         @Param('grantId') grantId: string,
-        @Param('folderId') folderId: string,
+        @Param('providerFolderId') folderId: string,
         @Body() createFolderDto: CreateFolderDto,
     ) {
         const userId = req.user.id;
@@ -201,76 +260,6 @@ export class FoldersController {
             }
             if (error.code === ServiceErrorCode.Nylas_Folder_Retrival_Error) {
                 throw new BadRequestException(error.message);
-            }
-        }
-    }
-
-    @Get(':grantId')
-    async findAll(
-        @Request() req,
-        @Param('grantId') grantId: string,
-    ): Promise<any> {
-        const userId = req.user.id;
-
-        try {
-            const grant = await this.grantService.findOne(userId, grantId);
-            if (!grant) {
-                throw new UnauthorizedException('Invalid grantId provided');
-            }
-            // Fetch provider folders
-            const { data } = await this.nylasService.fetchFolders(
-                grant.grantId,
-            );
-
-            // Fetch displayed folders
-            const displayedFolders = await this.foldersService.findAll(
-                userId,
-                grantId,
-            );
-            if (!data) {
-                return [];
-            }
-            const providerStripped = data.map((folder: Folder) => {
-                return {
-                    id: folder.id,
-                    name: folder.name,
-                    attributes: folder.attributes,
-                    totalCount: folder.totalCount,
-                    unreadCount: folder.unreadCount,
-                    systemFolder: folder.systemFolder,
-                    childCount: folder.childCount,
-                    parentId: folder.parentId,
-                    backgroundColor: folder.backgroundColor,
-                    textColor: folder.textColor,
-                };
-            });
-
-            return {
-                provider: providerStripped,
-                displayed: displayedFolders,
-            };
-        } catch (error) {
-            if (error.code === ServiceErrorCode.Prisma_Unknown) {
-                throw new InternalServerErrorException(error.message);
-            }
-            if (error.code === ServiceErrorCode.Nylas_Folder_Retrival_Error) {
-                throw new BadRequestException(error.message);
-            }
-        }
-    }
-
-    @Get(':grantId/displayed')
-    async findDisplayed(@Request() req, @Param('grantId') grantId: string) {
-        const userId = req.user.id;
-        try {
-            const grant = await this.grantService.findOne(userId, grantId);
-            if (!grant) {
-                throw new UnauthorizedException('Invalid grantId provided');
-            }
-            return await this.foldersService.findAll(userId, grantId);
-        } catch (error) {
-            if (error.code === ServiceErrorCode.Prisma_Unknown) {
-                throw new InternalServerErrorException(error.message);
             }
         }
     }

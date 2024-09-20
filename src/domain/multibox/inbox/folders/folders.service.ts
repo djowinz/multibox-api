@@ -10,6 +10,7 @@ export class FoldersService {
     constructor(private prisma: PrismaService) {}
 
     async findAll(userId: string, grantId: string) {
+        console.log(userId, grantId);
         try {
             const folders = await this.prisma.client.inboxLabel.findMany({
                 where: {
@@ -32,7 +33,7 @@ export class FoldersService {
             return await this.prisma.client.inboxLabel.findFirst({
                 where: {
                     ownerId: userId,
-                    folderId: providerId,
+                    providerId: providerId,
                 },
             });
         } catch (error) {
@@ -82,7 +83,7 @@ export class FoldersService {
         try {
             return await this.prisma.client.inboxLabel.deleteMany({
                 ownerId,
-                folderId: id,
+                providerId: id,
             });
         } catch (error) {
             this.logger.error(error);

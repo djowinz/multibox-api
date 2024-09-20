@@ -38,9 +38,9 @@ model InboxGrant {
 
 model InboxLabel {
   id    String @id @default(uuid()) @map("_id")
-  ownerId String
-  inboxGrantId String
-  folderId String
+  ownerId String?
+  inboxGrantId String?
+  providerId String
   name String
   backgroundColor String
   textColor String
